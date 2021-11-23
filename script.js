@@ -7,7 +7,7 @@ function fetchCoin(pair) {
 	fetch(url)
 		.then(res => res.json())
 		.then(data => {
-			//process data from BINANCE
+			//proces data from BINANCE
 			let maxPrice = 0;
 			const cdata = data.map(d => {
 				//determined max price of coin
