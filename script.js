@@ -65,19 +65,93 @@ var chart = LightweightCharts.createChart(document.body, {
 
 //get HTML elements
 let input = document.getElementById("input");
-let btn = document.getElementById("btn");
+let addButton = document.getElementById("addButton");
+let ul = document.getElementById('ul');
+let li = ul.appendChild(document.createElement('li'));
 
 //get data from localStorage
 let preferCoin = (localStorage.getItem("preferCoin") ?? "").split(",");
-
-//add EventListener on click
-btn.addEventListener('click', function add(event) {
-	fetchCoin(input.value)
-	preferCoin.push(input.value);
-	localStorage.setItem("preferCoin", preferCoin);
-});
+//converting an object to an array
+Object.entries(preferCoin)
 
 //get saved data on page refresh
 document.body.onload = () => {
 	preferCoin.forEach(element => fetchCoin(element))
 }
+
+//List of coin
+
+//create coin name list
+let coinList = {
+	coin: preferCoin,
+	//get coin's name and idx
+	addCoin: function (coinName, index) {
+		this.coin.push({
+			coinName: coinName,
+			isCompleted: false,
+			index: index
+		});
+		this.displayCoins();
+	},
+	//remove coins by id
+	removeCoin: function (index) {
+		for (let coin of this.coin) {
+			if (coin.index === parseInt(index)) {
+				this.coin.splice(this.coin.indexOf(coin), 1);
+			}
+		}
+		this.displayCoins();
+	},
+	//show coins in list
+	displayCoins: function () {
+		while (li.firstChild) {
+			li.removeChild(li.firstChild);
+		}
+		for (let coin of this.coin) {
+			li.appendChild(createCoin(coin.coinName, coin.index));
+			li.appendChild(createDelete(coin.index));
+		}
+	}
+};
+console.log(preferCoin)
+
+//create Delete and Add functions
+function createCoin(coin, index) {
+	let li = document.createElement('li');
+	li.innerText = coin;
+	li.id = index;
+	return li;
+}
+function createDelete(index) {
+	let deletebutton = document.createElement('button');
+	deletebutton.className = 'deletebutton'
+	deletebutton.textContent = 'Delete';
+	deletebutton.id = index;
+	return deletebutton;
+}
+
+//regulate the addition and removal of coins
+let handler = {
+	indexCounter: 0,
+	addCoin: function () {
+		coinList.addCoin(input.value, this.indexCounter);
+		input.value = "";
+		this.indexCounter++;
+	},
+	eventListeners: function () {
+		li.addEventListener('click', event => {
+			if (event.target.className === 'deletebutton') {
+				coinList.removeCoin(event.target.id);
+			}
+		});
+	}
+}
+handler.eventListeners();
+
+//add EventListener on click
+addButton.addEventListener('click', function add(event) {
+	fetchCoin(input.value);
+	preferCoin.push(input.value);
+	localStorage.setItem("preferCoin", preferCoin);
+	handler.addCoin();
+});

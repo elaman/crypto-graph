@@ -3,7 +3,8 @@ input{
   height: 25px;
   margin: 10px 3px;
 }
-button{
+button,
+.deletebutton{
   height: 30px;
   background-color: rgb(16, 87, 145);
   background-color: #7c7c7c;
