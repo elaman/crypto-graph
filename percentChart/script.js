@@ -1,3 +1,4 @@
+//Create a chart
 var chart = LightweightCharts.createChart(document.body, {
 	width: 1000,
 	height: 500,
@@ -27,108 +28,50 @@ var chart = LightweightCharts.createChart(document.body, {
 	},
 });
 
-var btcusdt = chart.addAreaSeries({
-	topColor: 'rgba(67, 83, 254, 0.7)',
-	bottomColor: 'rgba(67, 83, 254, 0.3)',
-	lineColor: 'rgba(67, 83, 254, 1)',
-	lineWidth: 2,
-});
-
-var ethusdt = chart.addAreaSeries({
-	topColor: 'rgba(255, 192, 0, 0.7)',
-	bottomColor: 'rgba(255, 192, 0, 0.3)',
-	lineColor: 'rgba(255, 192, 0, 1)',
-	lineWidth: 2,
-});
-
-var bnb = chart.addAreaSeries({
-	topColor: 'rgba(0, 102, 255, 0.7)',
-	bottomColor: 'rgba(0, 102, 255, 0.3)',
-	lineColor: 'rgba(0, 102, 255, 1)',
-	lineWidth: 2,
-});
-
-var gala = chart.addAreaSeries({
-	topColor: 'rgb(255, 60, 0, .7)',
-	bottomColor: 'rgba(255, 60, 0, 0.3)',
-	lineColor: 'rgba(255, 60, 0, 1)',
-	lineWidth: 2,
-});
-
-var avax = chart.addAreaSeries({
-	topColor: 'rgb(255, 0, 221, .7)',
-	bottomColor: 'rgba(255, 0, 221, 0.3)',
-	lineColor: 'rgba(255, 0, 221, 1)',
-	lineWidth: 2,
-});
-fetch(`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=1000`)
-	.then(res => res.json())
-	.then(data => {
-		let maxPrice = 0;
-		const cdata = data.map(d => {
-			let price = parseFloat(d[2]);
-			if (maxPrice < price) {
-				maxPrice = price;
-			}
-			return { time: d[0] / 1000, value: price }
-		});
-
-		for (let i = 0; i < cdata.length; i++) {
-			cdata[i].value = cdata[i].value / (maxPrice / 100);
-		}
-		btcusdt.setData(cdata);
-	})
-let socket = io.connect('http://127.0.0.1:5500/');
-
-socket.on('KLINE', (pl) => {
-	btcusdt.update(pl);
-});
-
-
+//get HTML elements
 let input = document.getElementById("input");
 let btn = document.getElementById("btn");
 
-input.addEventListener('change', function (event) {
+//
+let preferCoin = localStorage.getItem("preferCoin") ?? [];
+
+//add EventListener on click
+btn.addEventListener('click', function add(event) {
+
+	preferCoin.push(input.value);
+
+	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${input.value}&interval=1d&limit=1000`;
+	fetch(url)
+		.then(res => res.json())
+		.then(data => {
+			//proces data from BINANCE
+			let maxPrice = 0;
+			const cdata = data.map(d => {
+				//determined max price of coin
+				let price = parseFloat(d[2]);
+				if (maxPrice < price) {
+					maxPrice = price;
+				}
+				return { time: d[0] / 1000, value: price }
+			});
 
-	function getAPI() {
-		fetch(url)
-			.then(res => res.json())
-			.then(data => {
-				let maxPrice = 0;
-				const cdata = data.map(d => {
-					let price = parseFloat(d[2]);
-					if (maxPrice < price) {
-						maxPrice = price;
-					}
-					return { time: d[0] / 1000, value: price }
-				});
+			for (let i = 0; i < cdata.length; i++) {
+				cdata[i].value = cdata[i].value / (maxPrice / 100);
+			}
+			//create style for chartline
+			let r = Math.round(Math.random() * 255);
+			let g = Math.round(Math.random() * 255);
+			let b = Math.round(Math.random() * 255);
+			var chartColor = chart.addAreaSeries({
+				topColor: `rgba(${r}, ${g}, ${b}, .7)`,
+				bottomColor: `rgba(${r}, ${g}, ${b}, .3)`,
+				lineColor: `rgba(${r}, ${g}, ${b}, 1)`,
+				lineWidth: 2,
+			});
 
-				for (let i = 0; i < cdata.length; i++) {
-					cdata[i].value = cdata[i].value / (maxPrice / 100);
-				}
-				if(input.value == "BNBUSDT"){
-					bnb.setData(cdata);
-				}
-				if(input.value == "GALAUSDT"){
-					gala.setData(cdata);
-				}
-				if(input.value == "AVAXUSDT"){
-					avax.setData(cdata);
-				}
-				else{
-					ethusdt.setData(cdata)
-				}
-				localStorage.setItem("data", JSON.stringify(cdata));
-			})
-		socket = io.connect('http://127.0.0.1:5500/');
+			chartColor.setData(cdata);
 
-		socket.on('KLINE', (pl) => {
-			solusdt.update(pl);
-		});
-	}
-	btn.addEventListener("click", function getValue(event){
-		getAPI();
-		localStorage.getItem(JSON.parse("data"));
-	})
+			localStorage.setItem("preferCoin", preferCoin);
+		})
 });
