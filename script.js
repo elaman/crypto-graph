@@ -1,5 +1,5 @@
 function fetchCoin(pair) {
-	if( !pair ){
+	if (!pair) {
 		return
 	}
 	//fetch data from BINANCE
@@ -25,11 +25,9 @@ function fetchCoin(pair) {
 			let r = Math.round(Math.random() * 255);
 			let g = Math.round(Math.random() * 255);
 			let b = Math.round(Math.random() * 255);
-			var chartColor = chart.addAreaSeries({
-				topColor: `rgba(${r}, ${g}, ${b}, .7)`,
-				bottomColor: `rgba(${r}, ${g}, ${b}, .3)`,
-				lineColor: `rgba(${r}, ${g}, ${b}, 1)`,
-				lineWidth: 2,
+			let chartColor = chart.addLineSeries({
+				color: `rgba(${r}, ${g}, ${b}, 1)`,
+				lineWidth: 3,
 			});
 			chartColor.setData(cdata);
 		})
@@ -50,8 +48,8 @@ var chart = LightweightCharts.createChart(document.body, {
 		borderColor: 'rgba(197, 203, 206, 0.4)',
 	},
 	layout: {
-		backgroundColor: '#100841',
-		textColor: '#ffffff',
+		backgroundColor: '#ffffff',
+		textColor: '#7c7c7c',
 	},
 	grid: {
 		vertLines: {
@@ -83,3 +81,4 @@ btn.addEventListener('click', function add(event) {
 document.body.onload = () => {
 	preferCoin.forEach(element => fetchCoin(element));
 }
+
