@@ -1,5 +1,5 @@
 function fetchCoin(pair) {
-	if( !pair ){
+	if (!pair) {
 		return
 	}
 	//fetch data from BINANCE
@@ -79,5 +79,5 @@ btn.addEventListener('click', function add(event) {
 
 //get saved data on page refresh
 document.body.onload = () => {
-	preferCoin.forEach(element => fetchCoin(element));
+	preferCoin.forEach(element => fetchCoin(element))
 }
