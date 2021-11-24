@@ -22,11 +22,12 @@ function fetchCoin(pair, color) {
 				cdata[i].value = cdata[i].value / (maxPrice / 100);
 			}
 			//create style for chartline
-			let chartColor = chart.addLineSeries({
+			let chartLine = chart.addLineSeries({
 				color: color,
 				lineWidth: 3,
 			});
-			chartColor.setData(cdata);
+			chartLine.setData(cdata);
+chart.removeIndex(chartLine);
 		})
 	var li = document.createElement('li');
 	li.innerText = pair;
@@ -39,7 +40,9 @@ function fetchCoin(pair, color) {
 	delBtn.innerText = "remove";
 	delBtn.style.marginLeft = "1rem";
 	delBtn.addEventListener("click", () => {
-		localStorage.removeItem(preferCoin[pair])
+		document.getElementById("ul").removeChild(li);
+delete preferCoin[pair];
+		localStorage.setItem("preferCoin", JSON.stringify(preferCoin))
 	})
 }
 
