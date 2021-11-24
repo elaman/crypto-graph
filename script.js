@@ -33,8 +33,11 @@ function fetchCoin(pair, color) {
 	li.style.color = color;
 	var delBtn = document.createElement('button')
 
-	li.append(delBtn)
+	li.append(delBtn);
+	li.style.marginTop = '1rem';
 	document.getElementById("ul").append(li);
+	delBtn.innerText = "remove";
+	delBtn.style.marginLeft = "1rem";
 	delBtn.addEventListener("click", () => {
 		localStorage.removeItem(preferCoin[pair])
 	})
@@ -91,6 +94,20 @@ form.addEventListener('submit', function add(event) {
 	preferCoin[input.value] = color;
 	localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 });
+
+//array that contains names that already existes
+let blockednames = Object.keys(preferCoin);
+//comparing inputs names with blockednames
+input.addEventListener("change", () =>{
+	blockednames.forEach(el => {
+		if(input.value.toUpperCase() === el){
+			input.value = "";
+			document.getElementById("fail").innerText ="already exists dulyia tebe";
+			document.getElementById("fail").style.color = "red";
+			document.getElementById("fail").style.padding = ".5rem";
+		}
+	})
+})
 
 //get saved data on page refresh
 document.body.onload = () => {
