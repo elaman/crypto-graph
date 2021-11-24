@@ -41,6 +41,7 @@ function fetchCoin(pair, color) {
 	document.getElementById("ul").append(li);
 	delBtn.innerText = "remove";
 	delBtn.style.marginLeft = "1rem";
+
 	//delete event
 	delBtn.addEventListener("click", () => {
 		document.getElementById("ul").removeChild(li);
