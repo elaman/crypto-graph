@@ -4,12 +4,19 @@ function fetchCoin(pair, color) {
 	}
 	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`;
+
+	//create style for chartline
+	let chartLine = chart.addLineSeries({
+		color: color,
+		lineWidth: 3,
+	});
+
 	fetch(url)
 		.then(res => res.json())
 		.then(data => {
 			//proces data from BINANCE
 			let maxPrice = 0;
-			const cdata = data.map(d => {
+			let cdata = data.map(d => {
 				//determined max price of coin
 				let price = parseFloat(d[2]);
 				if (maxPrice < price) {
@@ -21,14 +28,9 @@ function fetchCoin(pair, color) {
 			for (let i = 0; i < cdata.length; i++) {
 				cdata[i].value = cdata[i].value / (maxPrice / 100);
 			}
-			//create style for chartline
-			let chartLine = chart.addLineSeries({
-				color: color,
-				lineWidth: 3,
-			});
 			chartLine.setData(cdata);
 		})
-		//get and create HTML element for coinList
+	//get and create HTML element for coinList
 	var li = document.createElement('li');
 	li.innerText = pair;
 	li.style.color = color;
@@ -44,6 +46,7 @@ function fetchCoin(pair, color) {
 		document.getElementById("ul").removeChild(li);
 		delete preferCoin[pair];
 		localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
+		chart.removeSeries(chartLine);
 	})
 }
 
