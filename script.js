@@ -1,5 +1,5 @@
-function fetchCoin(pair) {
-	if( !pair ){
+function fetchCoin(pair, color) {
+	if (!pair) {
 		return
 	}
 	//fetch data from BINANCE
@@ -22,17 +22,22 @@ function fetchCoin(pair) {
 				cdata[i].value = cdata[i].value / (maxPrice / 100);
 			}
 			//create style for chartline
-			let r = Math.round(Math.random() * 255);
-			let g = Math.round(Math.random() * 255);
-			let b = Math.round(Math.random() * 255);
-			var chartColor = chart.addAreaSeries({
-				topColor: `rgba(${r}, ${g}, ${b}, .7)`,
-				bottomColor: `rgba(${r}, ${g}, ${b}, .3)`,
-				lineColor: `rgba(${r}, ${g}, ${b}, 1)`,
-				lineWidth: 2,
+			let chartColor = chart.addLineSeries({
+				color: color,
+				lineWidth: 3,
 			});
 			chartColor.setData(cdata);
 		})
+	var li = document.createElement('li');
+	li.innerText = pair;
+	li.style.color = color;
+	var delBtn = document.createElement('button')
+
+	li.append(delBtn)
+	document.getElementById("ul").append(li);
+	delBtn.addEventListener("click", () => {
+		localStorage.removeItem(preferCoin[pair])
+	})
 }
 
 //Create a chart
@@ -50,8 +55,8 @@ var chart = LightweightCharts.createChart(document.body, {
 		borderColor: 'rgba(197, 203, 206, 0.4)',
 	},
 	layout: {
-		backgroundColor: '#100841',
-		textColor: '#ffffff',
+		backgroundColor: '#ffffff',
+		textColor: '#7c7c7c',
 	},
 	grid: {
 		vertLines: {
@@ -68,18 +73,26 @@ var chart = LightweightCharts.createChart(document.body, {
 //get HTML elements
 let input = document.getElementById("input");
 let btn = document.getElementById("btn");
+let form = document.getElementById("form");
 
 //get data from localStorage
-let preferCoin = (localStorage.getItem("preferCoin") ?? "").split(",");
+let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
+console.log(preferCoin);
 
 //add EventListener on click
-btn.addEventListener('click', function add(event) {
-	fetchCoin(input.value)
-	preferCoin.push(input.value);
-	localStorage.setItem("preferCoin", preferCoin);
+form.addEventListener('submit', function add(event) {
+
+	let r = Math.round(Math.random() * 255);
+	let g = Math.round(Math.random() * 255);
+	let b = Math.round(Math.random() * 255);
+	let color = `rgb(${r}, ${g}, ${b})`;
+
+	fetchCoin(input.value, color);
+	preferCoin[input.value] = color;
+	localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 });
 
 //get saved data on page refresh
 document.body.onload = () => {
-	preferCoin.forEach(element => fetchCoin(element));
+	Object.keys(preferCoin).forEach(element => fetchCoin(element, preferCoin[element]));
 }
