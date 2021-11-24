@@ -27,22 +27,23 @@ function fetchCoin(pair, color) {
 				lineWidth: 3,
 			});
 			chartLine.setData(cdata);
-chart.removeIndex(chartLine);
 		})
+		//get and create HTML element for coinList
 	var li = document.createElement('li');
 	li.innerText = pair;
 	li.style.color = color;
-	var delBtn = document.createElement('button')
+	var delBtn = document.createElement('button');
 
 	li.append(delBtn);
 	li.style.marginTop = '1rem';
 	document.getElementById("ul").append(li);
 	delBtn.innerText = "remove";
 	delBtn.style.marginLeft = "1rem";
+	//delete event
 	delBtn.addEventListener("click", () => {
 		document.getElementById("ul").removeChild(li);
-delete preferCoin[pair];
-		localStorage.setItem("preferCoin", JSON.stringify(preferCoin))
+		delete preferCoin[pair];
+		localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 	})
 }
 
@@ -85,12 +86,12 @@ let form = document.getElementById("form");
 let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
 console.log(preferCoin);
 
-//add EventListener on click
+//add EventListener on click form
 form.addEventListener('submit', function add(event) {
 
-	let r = Math.round(Math.random() * 255);
-	let g = Math.round(Math.random() * 255);
-	let b = Math.round(Math.random() * 255);
+	let r = Math.round(Math.random() * 125);
+	let g = Math.round(Math.random() * 125);
+	let b = Math.round(Math.random() * 125);
 	let color = `rgb(${r}, ${g}, ${b})`;
 
 	fetchCoin(input.value, color);
@@ -101,11 +102,11 @@ form.addEventListener('submit', function add(event) {
 //array that contains names that already existes
 let blockednames = Object.keys(preferCoin);
 //comparing inputs names with blockednames
-input.addEventListener("change", () =>{
+input.addEventListener("change", () => {
 	blockednames.forEach(el => {
-		if(input.value.toUpperCase() === el){
+		if (input.value.toUpperCase() === el) {
 			input.value = "";
-			document.getElementById("fail").innerText ="already exists dulyia tebe";
+			document.getElementById("fail").innerText = "already exists";
 			document.getElementById("fail").style.color = "red";
 			document.getElementById("fail").style.padding = ".5rem";
 		}

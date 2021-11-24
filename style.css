@@ -1,4 +1,7 @@
-
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@500&display=swap');
+body{
+  font-family: 'M PLUS 2', sans-serif;
+}
 input{
   height: 25px;
   margin: 10px 3px;
@@ -10,4 +13,12 @@ button{
   color: white;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   border-radius: 2px;
+}
+button:hover{
+  cursor: pointer;
+  background-color: rgb(35, 115, 180);
+}
+ul{
+  list-style-type: none;
+  padding: 1rem;
 }
