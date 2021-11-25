@@ -1,15 +1,18 @@
+//get data from localStorage
+let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
+console.log(preferCoin);
+
+//get saved data on page refresh
+document.body.onload = () => {
+	Object.keys(preferCoin).forEach(element => fetchCoin(element, preferCoin[element]));
+}
+
 function fetchCoin(pair, color) {
 	if (!pair) {
 		return
 	}
 	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`;
-
-	//create style for chartline
-	let chartLine = chart.addLineSeries({
-		color: color,
-		lineWidth: 3,
-	});
 
 	fetch(url)
 		.then(res => res.json())
@@ -28,27 +31,53 @@ function fetchCoin(pair, color) {
 			for (let i = 0; i < cdata.length; i++) {
 				cdata[i].value = cdata[i].value / (maxPrice / 100);
 			}
+			//create style for chartline
+			let chartLine = chart.addLineSeries({
+				color: color,
+				lineWidth: 3,
+			});
 			chartLine.setData(cdata);
+
+			//array that contains names that already existes
+			let blockednames = Object.keys(preferCoin);
+			//comparing inputs names with blockednames
+			let addBtn = document.getElementById("addBtn");
+			addBtn.addEventListener("click", () => {
+				blockednames.forEach(el => {
+					if (input.value.toUpperCase() === el) {
+						input.value = "";
+						fail.innerText = "This coin already exists";
+						fail.style.color = "red";
+						fail.style.padding = ".5rem";
+					}
+				});
+			});
+
+			//get and create HTML element for coinList
+			var li = document.createElement('li');
+			li.innerText = pair;
+			li.style.color = color;
+			var delBtn = document.createElement('button');
+
+			li.append(delBtn);
+			li.style.marginTop = '1rem';
+			document.getElementById("ul").append(li);
+			delBtn.innerText = "remove";
+			delBtn.style.marginLeft = "1rem";
+
+			//delete event
+			delBtn.addEventListener("click", () => {
+				document.getElementById("ul").removeChild(li);
+				delete preferCoin[pair];
+				localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
+				chart.removeSeries(chartLine);
+			})
 		})
-	//get and create HTML element for coinList
-	var li = document.createElement('li');
-	li.innerText = pair;
-	li.style.color = color;
-	var delBtn = document.createElement('button');
-
-	li.append(delBtn);
-	li.style.marginTop = '1rem';
-	document.getElementById("ul").append(li);
-	delBtn.innerText = "remove";
-	delBtn.style.marginLeft = "1rem";
-
-	//delete event
-	delBtn.addEventListener("click", () => {
-		document.getElementById("ul").removeChild(li);
-		delete preferCoin[pair];
-		localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
-		chart.removeSeries(chartLine);
-	})
+		.catch(error => {
+			fail.innerText = "This coin doesn't exists";
+			fail.style.color = "red";
+			fail.style.padding = ".5rem";
+		});
 }
 
 //Create a chart
@@ -83,16 +112,13 @@ var chart = LightweightCharts.createChart(document.body, {
 
 //get HTML elements
 let input = document.getElementById("input");
-let btn = document.getElementById("btn");
 let form = document.getElementById("form");
+let fail = document.getElementById("fail");
 
-//get data from localStorage
-let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
-console.log(preferCoin);
 
 //add EventListener on click form
 form.addEventListener('submit', function add(event) {
-
+	event.preventDefault();
 	let r = Math.round(Math.random() * 125);
 	let g = Math.round(Math.random() * 125);
 	let b = Math.round(Math.random() * 125);
@@ -103,21 +129,3 @@ form.addEventListener('submit', function add(event) {
 	localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 });
 
-//array that contains names that already existes
-let blockednames = Object.keys(preferCoin);
-//comparing inputs names with blockednames
-input.addEventListener("change", () => {
-	blockednames.forEach(el => {
-		if (input.value.toUpperCase() === el) {
-			input.value = "";
-			document.getElementById("fail").innerText = "already exists";
-			document.getElementById("fail").style.color = "red";
-			document.getElementById("fail").style.padding = ".5rem";
-		}
-	})
-})
-
-//get saved data on page refresh
-document.body.onload = () => {
-	Object.keys(preferCoin).forEach(element => fetchCoin(element, preferCoin[element]));
-}
