@@ -46,40 +46,41 @@ function fetchCoin(pair, color) {
 					if (input.value.toUpperCase() === el) {
 						input.value = "";
 						fail.innerText = "This coin already exists";
-						fail.style.color = "red";
-						fail.style.padding = ".5rem";
 					}
 				});
 			});
 
 			//get and create HTML element for coinList
 			var li = document.createElement('li');
+			var ul = document.getElementById("ul");
 			li.innerText = pair;
 			li.style.color = color;
 			var delBtn = document.createElement('button');
+			delBtn.className = "delBtn";
 
+			//Add delete button into li
 			li.append(delBtn);
-			li.style.marginTop = '1rem';
-			document.getElementById("ul").append(li);
+			ul.append(li);
 			delBtn.innerText = "remove";
-			delBtn.style.marginLeft = "1rem";
 
 			//delete event
 			delBtn.addEventListener("click", () => {
+				//Delete coins from list
 				document.getElementById("ul").removeChild(li);
+				//Delete coins from localSrotage
 				delete preferCoin[pair];
 				localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
+				//Delete coins from chart
 				chart.removeSeries(chartLine);
-
+				//Delete coins from blocednames
 				for (let i = 0; i < blockednames.length; i++) {
 					delete blockednames[i];
 				}
-			})
+			});
 		})
+		//Checking coin existibility in BININCE
 		.catch(error => {
 			fail.innerText = "This coin doesn't exists";
-			fail.style.color = "red";
-			fail.style.padding = ".5rem";
 		});
 }
 
@@ -117,6 +118,7 @@ var chart = LightweightCharts.createChart(document.body, {
 let input = document.getElementById("input");
 let form = document.getElementById("form");
 let fail = document.getElementById("fail");
+fail.className = "fail";
 
 
 //add EventListener on click form

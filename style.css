@@ -22,3 +22,13 @@ ul{
   list-style-type: none;
   padding: 1rem;
 }
+li{
+  margin-top: 1rem;
+}
+.delBtn{
+  margin-left: 1rem;
+}
+.fail{
+  color: tomato;
+  padding: .5rem;
+}
