@@ -13,11 +13,10 @@ function fetchCoin(pair, color) {
 	}
 	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`;
-
 	fetch(url)
 		.then(res => res.json())
 		.then(data => {
-			//proces data from BINANCE
+			//process data from BINANCE
 			let maxPrice = 0;
 			let cdata = data.map(d => {
 				//determined max price of coin
@@ -71,6 +70,10 @@ function fetchCoin(pair, color) {
 				delete preferCoin[pair];
 				localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 				chart.removeSeries(chartLine);
+
+				for (let i = 0; i < blockednames.length; i++) {
+					delete blockednames[i];
+				}
 			})
 		})
 		.catch(error => {
