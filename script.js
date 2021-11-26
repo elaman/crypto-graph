@@ -1,3 +1,4 @@
+
 //get data from localStorage
 let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
 console.log(preferCoin);
@@ -7,12 +8,20 @@ document.body.onload = () => {
 	Object.keys(preferCoin).forEach(element => fetchCoin(element, preferCoin[element]));
 }
 
+
 function fetchCoin(pair, color) {
 	if (!pair) {
 		return
 	}
 	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`;
+
+	//create style for chartline
+	let chartLine = chart.addLineSeries({
+		color: color,
+		lineWidth: 3,
+	});
+
 	fetch(url)
 		.then(res => res.json())
 		.then(data => {
@@ -30,6 +39,7 @@ function fetchCoin(pair, color) {
 			for (let i = 0; i < cdata.length; i++) {
 				cdata[i].value = cdata[i].value / (maxPrice / 100);
 			}
+
 			//create style for chartline
 			let chartLine = chart.addLineSeries({
 				color: color,
@@ -82,6 +92,7 @@ function fetchCoin(pair, color) {
 		.catch(error => {
 			fail.innerText = "This coin doesn't exists";
 		});
+
 }
 
 //Create a chart
@@ -124,6 +135,7 @@ fail.className = "fail";
 //add EventListener on click form
 form.addEventListener('submit', function add(event) {
 	event.preventDefault();
+
 	let r = Math.round(Math.random() * 125);
 	let g = Math.round(Math.random() * 125);
 	let b = Math.round(Math.random() * 125);
