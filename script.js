@@ -1,7 +1,6 @@
 
 //get data from localStorage
 let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
-console.log(preferCoin);
 
 //get saved data on page refresh
 document.body.onload = () => {
