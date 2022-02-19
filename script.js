@@ -28,6 +28,12 @@ const chart = LightweightCharts.createChart(document.querySelector("main"), {
   },
 });
 
+// Manage chart size.
+window.addEventListener('resize', event => {
+  chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
+});
+window.dispatchEvent(new Event('resize'));
+
 // Attempt to restore saved coins.
 let coinPairs = {};
 try {
@@ -55,7 +61,7 @@ document.querySelector("form").addEventListener("submit", (event) => {
     );
   } else {
     alert("This coin already exists");
-    coinPairInput.value = '';
+    coinPairInput.value = "";
   }
 
   event.preventDefault();
@@ -80,7 +86,7 @@ function addCoinPair(coinPair, color) {
     })
     .catch((error) => {
       // Process errors.
-      console.log(error);
+      alert('Error adding the coin pair. Check if format is valid.');
     });
 }
 
@@ -89,10 +95,15 @@ function addCoinPairDOM(coinPairLine) {
   const coinPairItem = document.createElement("li");
   let { coinPair, color } = coinPairLine.options();
   coinPairItem.textContent = coinPair;
-  coinPairItem.style.color = color;
+  coinPairItem.className = "list-group-item d-flex align-items-center";
+
+  const colorMarker = document.createElement("span");
+  colorMarker.className = "rounded-circle p-2 me-2";
+  colorMarker.style.backgroundColor = color;
 
   const removeButton = document.createElement("button");
   removeButton.textContent = "Remove";
+  removeButton.className = "btn btn-sm btn-danger ms-auto";
   removeButton.addEventListener("click", () => {
     // Remove from UI.
     coinPairList.removeChild(coinPairItem);
@@ -103,6 +114,7 @@ function addCoinPairDOM(coinPairLine) {
     localStorage.setItem("coinPairs", JSON.stringify(coinPairs));
   });
 
+  coinPairItem.prepend(colorMarker);
   coinPairItem.append(removeButton);
   coinPairList.append(coinPairItem);
 }
