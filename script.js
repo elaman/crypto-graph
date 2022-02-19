@@ -1,12 +1,12 @@
-
-//get data from localStorage
-let preferCoin = JSON.parse(localStorage.getItem("preferCoin") ?? "{}");
+let coinPairs = {};
+try {
+	coinPairs = JSON.parse(localStorage.getItem("coinPairs"));
+} catch (error) {}
 
 //get saved data on page refresh
 document.body.onload = () => {
-	Object.keys(preferCoin).forEach(element => fetchCoin(element, preferCoin[element]));
+	Object.keys(coinPairs).forEach(element => fetchCoin(element, coinPairs[element]));
 }
-
 
 function fetchCoin(pair, color) {
 	if (!pair) {
@@ -14,12 +14,6 @@ function fetchCoin(pair, color) {
 	}
 	//fetch data from BINANCE
 	let url = `https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`;
-
-	//create style for chartline
-	let chartLine = chart.addLineSeries({
-		color: color,
-		lineWidth: 3,
-	});
 
 	fetch(url)
 		.then(res => res.json())
@@ -47,14 +41,14 @@ function fetchCoin(pair, color) {
 			chartLine.setData(cdata);
 
 			//array that contains names that already existes
-			let blockednames = Object.keys(preferCoin);
+			let blockednames = Object.keys(coinPairs);
 			//comparing inputs names with blockednames
 			let addBtn = document.getElementById("addBtn");
 			addBtn.addEventListener("click", () => {
 				blockednames.forEach(el => {
 					if (input.value.toUpperCase() === el) {
 						input.value = "";
-						fail.innerText = "This coin already exists";
+						alert("This coin already exists");
 					}
 				});
 			});
@@ -77,8 +71,8 @@ function fetchCoin(pair, color) {
 				//Delete coins from list
 				document.getElementById("ul").removeChild(li);
 				//Delete coins from localSrotage
-				delete preferCoin[pair];
-				localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
+				delete coinPairs[pair];
+				localStorage.setItem("coinPairs", JSON.stringify(coinPairs));
 				//Delete coins from chart
 				chart.removeSeries(chartLine);
 				//Delete coins from blocednames
@@ -89,7 +83,7 @@ function fetchCoin(pair, color) {
 		})
 		//Checking coin existibility in BININCE
 		.catch(error => {
-			fail.innerText = "This coin doesn't exists";
+			console.log(error);
 		});
 
 }
@@ -124,24 +118,19 @@ var chart = LightweightCharts.createChart(document.body, {
 	},
 });
 
-//get HTML elements
-let input = document.getElementById("input");
-let form = document.getElementById("form");
-let fail = document.getElementById("fail");
-fail.className = "fail";
-
-
 //add EventListener on click form
-form.addEventListener('submit', function add(event) {
+document.getElementById("form").addEventListener('submit', function add(event) {
+	const coinPair = document.getElementById("input").value;
+
+	let color = `rgb(
+		${(Math.random() * 125).toFixed()},
+		${(Math.random() * 125).toFixed()},
+		${(Math.random() * 125).toFixed()}
+	)`;
+
+	fetchCoin(coinPair, color);
+	coinPairs[coinPair] = color;
+	localStorage.setItem("coinPairs", JSON.stringify(this.pairs));
+
 	event.preventDefault();
-
-	let r = Math.round(Math.random() * 125);
-	let g = Math.round(Math.random() * 125);
-	let b = Math.round(Math.random() * 125);
-	let color = `rgb(${r}, ${g}, ${b})`;
-
-	fetchCoin(input.value, color);
-	preferCoin[input.value] = color;
-	localStorage.setItem("preferCoin", JSON.stringify(preferCoin));
 });
-
