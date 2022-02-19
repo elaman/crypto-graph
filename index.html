@@ -10,14 +10,20 @@
 </head>
 
 <body>
-  <form action="" id="form">
-    <input required type="text" id="input" value="">
-
-    <button type="submit" id="addBtn">Add</button>
-
+  <form>
+    <fieldset>
+      <legend>Pairs</legend>
+      <ul>
+        <li>
+          <input required type="text" value="" placeholder="BTCUSDT">
+          <button type="submit">Add</button>
+        </li>
+      </ul>
+    </fieldset>
   </form>
-  <div id="fail"></div>
-  <ul id="ul"></ul>
+
+  <main></main>
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   <script src="./script.js"></script>
