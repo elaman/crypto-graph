@@ -1,5 +1,5 @@
 // Create the chart
-var chart = LightweightCharts.createChart(document.querySelector("main"), {
+const chart = LightweightCharts.createChart(document.querySelector("main"), {
   width: 1000,
   height: 500,
   rightPriceScale: {
@@ -40,20 +40,22 @@ Object.keys(coinPairs).forEach((coinPair) =>
 );
 
 // Prepare new coin form.
+const coinPairInput = document.querySelector("input");
 document.querySelector("form").addEventListener("submit", (event) => {
-  const coinPair = document.querySelector("input").value.trim().toUpperCase();
+  const coinPair = coinPairInput.value.trim().toUpperCase();
 
   if (!coinPairs[coinPair]) {
     addCoinPair(
       coinPair,
-      `rgb(
-			${(Math.random() * 125).toFixed()},
-			${(Math.random() * 125).toFixed()},
-			${(Math.random() * 125).toFixed()}
-		)`
+      `rgb(${[
+        (Math.random() * 125).toFixed(),
+        (Math.random() * 125).toFixed(),
+        (Math.random() * 125).toFixed(),
+      ].join(", ")})`
     );
   } else {
     alert("This coin already exists");
+    coinPairInput.value = '';
   }
 
   event.preventDefault();
@@ -66,11 +68,11 @@ function addCoinPair(coinPair, color) {
     .then((response) => response.json())
     .then((data) => {
       // Add line to the chart.
-      const coinPairLine = chart.addLineSeries({ color });
+      const coinPairLine = chart.addLineSeries({ coinPair, color });
       coinPairLine.setData(processExchangeData(data));
 
       // Add DOM elements responsible for coin pair.
-      addCoinPairDOM(coinPair, color, coinPairLine);
+      addCoinPairDOM(coinPairLine);
 
       // Update local storage.
       coinPairs[coinPair] = color;
@@ -83,12 +85,13 @@ function addCoinPair(coinPair, color) {
 }
 
 const coinPairList = document.querySelector("ul");
-function addCoinPairDOM(coinPair, color, coinPairLine) {
-  var coinPairItem = document.createElement("li");
+function addCoinPairDOM(coinPairLine) {
+  const coinPairItem = document.createElement("li");
+  let { coinPair, color } = coinPairLine.options();
   coinPairItem.textContent = coinPair;
   coinPairItem.style.color = color;
 
-  var removeButton = document.createElement("button");
+  const removeButton = document.createElement("button");
   removeButton.textContent = "Remove";
   removeButton.addEventListener("click", () => {
     // Remove from UI.
