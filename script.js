@@ -29,10 +29,10 @@ const chart = LightweightCharts.createChart(document.querySelector("main"), {
 });
 
 // Manage chart size.
-window.addEventListener('resize', event => {
+window.addEventListener("resize", (event) => {
   chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
 });
-window.dispatchEvent(new Event('resize'));
+window.dispatchEvent(new Event("resize"));
 
 // Attempt to restore saved coins.
 let coinPairs = {};
@@ -51,14 +51,7 @@ document.querySelector("form").addEventListener("submit", (event) => {
   const coinPair = coinPairInput.value.trim().toUpperCase();
 
   if (!coinPairs[coinPair]) {
-    addCoinPair(
-      coinPair,
-      `rgb(${[
-        (Math.random() * 125).toFixed(),
-        (Math.random() * 125).toFixed(),
-        (Math.random() * 125).toFixed(),
-      ].join(", ")})`
-    );
+    addCoinPair(coinPair, generateColor());
   } else {
     alert("This coin already exists");
     coinPairInput.value = "";
@@ -86,7 +79,7 @@ function addCoinPair(coinPair, color) {
     })
     .catch((error) => {
       // Process errors.
-      alert('Error adding the coin pair. Check if format is valid.');
+      alert("Error adding the coin pair. Check if format is valid.");
     });
 }
 
@@ -134,4 +127,11 @@ function processExchangeData(data, maxPrice = 0) {
       // Calculate value based on max price.
       value: price / (maxPrice / 100),
     }));
+}
+
+const colorElement = document.createElement("div");
+document.body.append(colorElement);
+function generateColor() {
+  colorElement.style.color = `hsl(${360 * Math.random()}, 100%, 60%)`;
+  return window.getComputedStyle(colorElement).color;
 }
