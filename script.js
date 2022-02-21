@@ -28,6 +28,15 @@ const chart = LightweightCharts.createChart(document.querySelector("main"), {
   },
 });
 
+chart.subscribeCrosshairMove((param) => {
+  if ( param === undefined || param.time === undefined) {
+    document.querySelectorAll('[id$="-price"]').forEach(priceMarker => priceMarker.textContent = "");
+  }
+  else {
+    console.log(param);
+  }
+});
+
 // Manage chart size.
 window.addEventListener("resize", (event) => {
   chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
@@ -67,7 +76,7 @@ function addCoinPair(coinPair, color) {
     .then((response) => response.json())
     .then((data) => {
       // Add line to the chart.
-      const coinPairLine = chart.addLineSeries({ coinPair, color });
+      const coinPairLine = chart.addLineSeries({ color, title: coinPair });
       coinPairLine.setData(processExchangeData(data));
 
       // Add DOM elements responsible for coin pair.
@@ -86,8 +95,8 @@ function addCoinPair(coinPair, color) {
 const coinPairList = document.querySelector("ul");
 function addCoinPairDOM(coinPairLine) {
   const coinPairItem = document.createElement("li");
-  let { coinPair, color } = coinPairLine.options();
-  coinPairItem.textContent = coinPair;
+  let { title, color } = coinPairLine.options();
+  coinPairItem.textContent = title;
   coinPairItem.className = "list-group-item d-flex align-items-center";
 
   const colorMarker = document.createElement("span");
@@ -103,7 +112,7 @@ function addCoinPairDOM(coinPairLine) {
     // Remove from Chart.
     chart.removeSeries(coinPairLine);
     // Delete coins from localSrotage
-    delete coinPairs[coinPair];
+    delete coinPairs[title];
     localStorage.setItem("coinPairs", JSON.stringify(coinPairs));
   });
 
