@@ -34,6 +34,16 @@ window.addEventListener("resize", (event) => {
 });
 window.dispatchEvent(new Event("resize"));
 
+// Attempt to restore time scale.
+let timeScale = localStorage.getItem("timeScale") ?? "1d";
+document.querySelectorAll('input[type="radio"]').forEach((input) => {
+  input.checked = input.value == timeScale;
+  input.addEventListener("input", (event) => {
+    localStorage.setItem("timeScale", (timeScale = event.target.value));
+    location.reload();
+  });
+});
+
 // Attempt to restore saved coins.
 let coinPairs = {};
 try {
@@ -60,7 +70,7 @@ document.querySelector("form").addEventListener("submit", (event) => {
 
 function addCoinPair(coinPair) {
   fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${coinPair}&interval=1d&limit=1000`
+    `https://api.binance.com/api/v3/klines?symbol=${coinPair}&interval=${timeScale}&limit=1000`
   )
     .then((response) => response.json())
     .then((data) => {
@@ -81,7 +91,7 @@ function addCoinPair(coinPair) {
 
       // Websocket
       const sock = new WebSocket(
-        `wss://stream.binance.com:9443/ws/${coinPair.toLocaleLowerCase()}@kline_1d`
+        `wss://stream.binance.com:9443/ws/${coinPair.toLocaleLowerCase()}@kline_${timeScale}`
       );
       sock.addEventListener("message", function (event) {
         const data = JSON.parse(event.data);

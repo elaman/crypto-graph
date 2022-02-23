@@ -29,6 +29,12 @@
         max-width: 310px;
         width: calc(100vw - 2rem);
       }
+      aside.btn-group {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        z-index: 100;
+      }
     </style>
   </head>
 
@@ -41,6 +47,28 @@
         </li>
       </ul>
     </form>
+    <aside class="bg-light btn-group shadow" role="group">
+      <input type="radio" class="btn-check" name="time" id="time-5m" value="5m" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-5m">5m</label>
+      <input type="radio" class="btn-check" name="time" id="time-15m" value="15m" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-15m">15m</label>
+      <input type="radio" class="btn-check" name="time" id="time-30m" value="30m" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-30m">30m</label>
+      <input type="radio" class="btn-check" name="time" id="time-1h" value="1h" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-1h">1h</label>
+      <input type="radio" class="btn-check" name="time" id="time-4h" value="4h" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-4h">4h</label>
+      <input type="radio" class="btn-check" name="time" id="time-8h" value="8h" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-8h">8h</label>
+      <input type="radio" class="btn-check" name="time" id="time-1D" value="1d" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-1D">1D</label>
+      <input type="radio" class="btn-check" name="time" id="time-3D" value="3d" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-3D">3D</label>
+      <input type="radio" class="btn-check" name="time" id="time-1W" value="1w" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-1W">1W</label>
+      <input type="radio" class="btn-check" name="time" id="time-1M" value="1M" autocomplete="off">
+      <label class="btn btn-outline-primary" for="time-1M">1M</label>
+    </aside>
     <main></main>
 
     <script
