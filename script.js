@@ -28,15 +28,6 @@ const chart = LightweightCharts.createChart(document.querySelector("main"), {
   },
 });
 
-chart.subscribeCrosshairMove((param) => {
-  if ( param === undefined || param.time === undefined) {
-    document.querySelectorAll('[id$="-price"]').forEach(priceMarker => priceMarker.textContent = "");
-  }
-  else {
-    console.log(param);
-  }
-});
-
 // Manage chart size.
 window.addEventListener("resize", (event) => {
   chart.applyOptions({ width: window.innerWidth, height: window.innerHeight });
@@ -51,7 +42,7 @@ try {
 
 // Add existing coins to the chart.
 Object.keys(coinPairs).forEach((coinPair) =>
-  addCoinPair(coinPair, coinPairs[coinPair])
+  addCoinPair(coinPair)
 );
 
 // Prepare new coin form.
@@ -59,36 +50,38 @@ const coinPairInput = document.querySelector("input");
 document.querySelector("form").addEventListener("submit", (event) => {
   const coinPair = coinPairInput.value.trim().toUpperCase();
 
-  if (!coinPairs[coinPair]) {
-    addCoinPair(coinPair, generateColor());
+  if (!coinPairs.hasOwnProperty(coinPair)) {
+    addCoinPair(coinPair);
   } else {
-    alert("This coin already exists");
-    coinPairInput.value = "";
+    alert(`${coinPair} coin pair already exists`);
   }
 
+  coinPairInput.value = "";
   event.preventDefault();
 });
 
-function addCoinPair(coinPair, color) {
+function addCoinPair(coinPair) {
   fetch(
     `https://api.binance.com/api/v3/klines?symbol=${coinPair}&interval=1d&limit=1000`
   )
     .then((response) => response.json())
     .then((data) => {
       // Add line to the chart.
-      const coinPairLine = chart.addLineSeries({ color, title: coinPair });
+      const color = coinPairs.hasOwnProperty(coinPair) ? coinPairs[coinPair].color : generateColor();
+      const coinPairLine = chart.addLineSeries({ title: coinPair, color });
       coinPairLine.setData(processExchangeData(data));
 
       // Add DOM elements responsible for coin pair.
       addCoinPairDOM(coinPairLine);
 
       // Update local storage.
-      coinPairs[coinPair] = color;
+      coinPairs[coinPair] = { color };
       localStorage.setItem("coinPairs", JSON.stringify(coinPairs));
     })
     .catch((error) => {
       // Process errors.
-      alert("Error adding the coin pair. Check if format is valid.");
+      alert(`Error adding the ${coinPair} coin pair. Check if format is valid.`);
+      console.error(error);
     });
 }
 
